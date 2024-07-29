@@ -3,14 +3,19 @@
 
 from typing import List
 
-import fire
-
 from llama import Llama
+import os
+
+
++os.environ['MASTER_ADDR'] = 'localhost'
++os.environ['MASTER_PORT'] = '5678'
++os.environ['RANK'] = '0'
++os.environ['WORLD_SIZE'] = '1'
 
 
 def main(
-    ckpt_dir: str,
-    tokenizer_path: str,
+    ckpt_dir: str = r'/stores/llm_models/llama/Meta-Llama-3-8B-pth',
+    tokenizer_path: str = r'/stores/llm_models/llama/Meta-Llama-3-8B-pth/tokenizer.model',
     temperature: float = 0.6,
     top_p: float = 0.9,
     max_seq_len: int = 128,
@@ -34,19 +39,19 @@ def main(
     prompts: List[str] = [
         # For these prompts, the expected answer is the natural continuation of the prompt
         "I believe the meaning of life is",
-        "Simply put, the theory of relativity states that ",
-        """A brief message congratulating the team on the launch:
-
-        Hi everyone,
-
-        I just """,
-        # Few shot prompt (providing a few examples before asking model to complete more);
-        """Translate English to French:
-
-        sea otter => loutre de mer
-        peppermint => menthe poivrée
-        plush girafe => girafe peluche
-        cheese =>""",
+        # "Simply put, the theory of relativity states that ",
+        # """A brief message congratulating the team on the launch:
+        #
+        # Hi everyone,
+        #
+        # I just """,
+        # # Few shot prompt (providing a few examples before asking model to complete more);
+        # """Translate English to French:
+        #
+        # sea otter => loutre de mer
+        # peppermint => menthe poivrée
+        # plush girafe => girafe peluche
+        # cheese =>""",
     ]
     results = generator.text_completion(
         prompts,
@@ -61,4 +66,4 @@ def main(
 
 
 if __name__ == "__main__":
-    fire.Fire(main)
+    main()
