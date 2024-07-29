@@ -7,10 +7,10 @@ from llama import Llama
 import os
 
 
-+os.environ['MASTER_ADDR'] = 'localhost'
-+os.environ['MASTER_PORT'] = '5678'
-+os.environ['RANK'] = '0'
-+os.environ['WORLD_SIZE'] = '1'
+os.environ['MASTER_ADDR'] = 'localhost'
+os.environ['MASTER_PORT'] = '5678'
+os.environ['RANK'] = '0'
+os.environ['WORLD_SIZE'] = '1'
 
 
 def main(
