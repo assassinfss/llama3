@@ -14,7 +14,7 @@ os.environ['WORLD_SIZE'] = '1'
 
 
 def main(
-    ckpt_dir: str = r'/stores/llm_models/llama/Meta-Llama-3-8B-pth',
+    ckpt_dir: str = r'/stores/llm_models/llama/Meta-Llama-3-8B',
     tokenizer_path: str = r'/stores/llm_models/llama/Meta-Llama-3-8B-pth/tokenizer.model',
     temperature: float = 0.6,
     top_p: float = 0.9,
@@ -38,7 +38,7 @@ def main(
 
     prompts: List[str] = [
         # For these prompts, the expected answer is the natural continuation of the prompt
-        "I believe the meaning of life is",
+        "I believe the meaning of life is to",
         # "Simply put, the theory of relativity states that ",
         # """A brief message congratulating the team on the launch:
         #

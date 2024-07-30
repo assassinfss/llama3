@@ -19,6 +19,9 @@ from fairscale.nn.model_parallel.initialize import (
 from llama.model import ModelArgs, Transformer
 from llama.tokenizer import ChatFormat, Dialog, Message, Tokenizer
 
+from safetensors import safe_open
+from llama.Utils import utils
+
 
 class CompletionPrediction(TypedDict, total=False):
     generation: str
@@ -85,13 +88,19 @@ class Llama:
             sys.stdout = open(os.devnull, "w")
 
         start_time = time.time()
-        checkpoints = sorted(Path(ckpt_dir).glob("*.pth"))
+        checkpoints = sorted(Path(ckpt_dir).glob("*.safetensors"))
         assert len(checkpoints) > 0, f"no checkpoint files found in {ckpt_dir}"
-        assert model_parallel_size == len(
-            checkpoints
-        ), f"Loading a checkpoint for MP={len(checkpoints)} but world size is {model_parallel_size}"
-        ckpt_path = checkpoints[get_model_parallel_rank()]
-        checkpoint = torch.load(ckpt_path, map_location="cpu")
+        checkpoint = {}
+        for safetensor_i in checkpoints:
+            with safe_open(safetensor_i, framework="pt") as f:
+                for k in f.keys():
+                    checkpoint[k] = f.get_tensor(k)
+        utils.convert_safetensor_2_pth(checkpoint)
+        # assert model_parallel_size == len(
+        #     checkpoints
+        # ), f"Loading a checkpoint for MP={len(checkpoints)} but world size is {model_parallel_size}"
+        # ckpt_path = checkpoints[get_model_parallel_rank()]
+        # checkpoint = torch.load(ckpt_path, map_location="cpu")
         with open(Path(ckpt_dir) / "params.json", "r") as f:
             params = json.loads(f.read())
 
@@ -107,7 +116,8 @@ class Llama:
         else:
             torch.set_default_tensor_type(torch.cuda.HalfTensor)
         model = Transformer(model_args)
-        model.load_state_dict(checkpoint, strict=False)
+        print(checkpoint.keys())
+        model.load_state_dict(checkpoint, strict=True)
         print(f"Loaded in {time.time() - start_time:.2f} seconds")
 
         return Llama(model, tokenizer)
