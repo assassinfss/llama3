@@ -38,7 +38,7 @@ def main(
 
     prompts: List[str] = [
         # For these prompts, the expected answer is the natural continuation of the prompt
-        "I believe the meaning of life is to",
+        "I believe the meaning of life is",
         # "Simply put, the theory of relativity states that ",
         # """A brief message congratulating the team on the launch:
         #
